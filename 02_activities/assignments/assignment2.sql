@@ -20,6 +20,16 @@ The `||` values concatenate the columns into strings.
 Edit the appropriate columns -- you're making two edits -- and the NULL rows will be fixed. 
 All the other rows will remain the same.) */
 
+/*SELECT 
+product_name || ', ' || product_size|| ' (' || product_qty_type || ')'
+FROM product
+
+select * from product */
+
+SELECT 
+product_name || ', ' || COALESCE(product_size, '') || ' (' || COALESCE(product_qty_type, 'unit') || ')'
+FROM product
+
 
 
 --Windowed Functions
@@ -32,7 +42,12 @@ each new market date for each customer, or select only the unique market dates p
 (without purchase details) and number those visits. 
 HINT: One of these approaches uses ROW_NUMBER() and one uses DENSE_RANK(). */
 
+select * from customer_purchases
 
+select market_date, customer_id, row_number() over (PARTITION BY customer_id, market_date order by transaction_time) as visit_number from customer_purchases order by 1,2 
+
+select product_id, vendor_id, market_date, customer_id, quantity, cost_to_customer_per_qty, transaction_time, 
+row_number() over (PARTITION BY customer_id, market_date order by transaction_time) as visit_number from customer_purchases order by 3,4
 
 /* 2. Reverse the numbering of the query from a part so each customer’s most recent visit is labeled 1, 
 then write another query that uses this one as a subquery (or temp table) and filters the results to 
