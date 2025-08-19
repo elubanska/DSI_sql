@@ -187,9 +187,14 @@ FROM product_units
 
 HINT: If you don't specify a WHERE clause, you are going to have a bad time.*/
 
-select * from product_units
-WHERE snapshot_timestamp
-order by product_id
+SELECT * FROM product_units
+WHERE product_name = 'Apple Pie'
+
+--SELECT * FROM product_units
+--WHERE snapshot_timestamp = (SELECT MAX(snapshot_timestamp) FROM product_units) and product_name = 'Apple Pie'
+
+DELETE FROM product_units
+WHERE snapshot_timestamp = (SELECT MAX(snapshot_timestamp) FROM product_units) and product_name = 'Apple Pie'
 
 -- UPDATE
 /* 1.We want to add the current_quantity to the product_units table. 
