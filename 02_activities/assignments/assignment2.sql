@@ -171,14 +171,25 @@ WHERE prod.product_qty_type = 'unit'
 /*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 
 This can be any product you desire (e.g. add another record for Apple Pie). */
 
+INSERT INTO product_units (product_id, product_name, product_size, product_category_id, product_qty_type, snapshot_timestamp)
+SELECT MAX(product_id) + 1, 'Apple Pie', '10"', 3, 'unit', CURRENT_TIMESTAMP
+FROM product_units
 
+
+--select * from product_units
+--order by product_id
+
+--DELETE FROM product_units
+--WHERE product_id = 123
 
 -- DELETE
 /* 1. Delete the older record for the whatever product you added. 
 
 HINT: If you don't specify a WHERE clause, you are going to have a bad time.*/
 
-
+select * from product_units
+WHERE snapshot_timestamp
+order by product_id
 
 -- UPDATE
 /* 1.We want to add the current_quantity to the product_units table. 
