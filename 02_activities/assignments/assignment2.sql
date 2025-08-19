@@ -101,7 +101,35 @@ HINT: There are a possibly a few ways to do this query, but if you're struggling
 3) Query the second temp table twice, once for the best day, once for the worst day, 
 with a UNION binding them. */
 
+WITH DailySales AS (
+    SELECT 
+        market_date,
+        SUM(quantity * cost_to_customer_per_qty) AS total_sales
+    FROM customer_purchases
+    GROUP BY market_date
+	),
+	RankedSales AS (
+    SELECT 
+        market_date,
+        total_sales,
+        RANK() OVER (ORDER BY total_sales DESC) AS sales_rank_desc,
+        RANK() OVER (ORDER BY total_sales ASC) AS sales_rank_asc
+    FROM DailySales)
+SELECT 
+    market_date,
+    total_sales,
+    'best_day' AS sales_category
+FROM RankedSales
+WHERE sales_rank_desc = 1
 
+UNION
+
+SELECT 
+    market_date,
+    total_sales,
+    'worst_day' AS sales_category
+FROM RankedSales
+WHERE sales_rank_asc = 1;
 
 
 /* SECTION 3 */
@@ -124,6 +152,11 @@ Before your final group by you should have the product of those two queries (x*y
 This table will contain only products where the `product_qty_type = 'unit'`. 
 It should use all of the columns from the product table, as well as a new column for the `CURRENT_TIMESTAMP`.  
 Name the timestamp column `snapshot_timestamp`. */
+
+--Drop table product_units
+
+--CREATE TABLE product_units as 
+--select * FROM product
 
 
 
