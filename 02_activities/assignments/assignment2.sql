@@ -158,6 +158,14 @@ Name the timestamp column `snapshot_timestamp`. */
 --CREATE TABLE product_units as 
 --select * FROM product
 
+CREATE TABLE product_units AS
+SELECT 
+    prod.*,
+    CURRENT_TIMESTAMP AS snapshot_timestamp
+FROM product prod
+WHERE prod.product_qty_type = 'unit'
+
+--select * from product_units
 
 
 /*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 
