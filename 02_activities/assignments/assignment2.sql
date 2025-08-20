@@ -164,7 +164,7 @@ FROM vendor_products as vp
 CROSS JOIN customer_count As cc
 ORDER BY vp.vendor_name, vp.product_name
 
-
+*/ ------------------------ */
 
 	-- INSERT
 /*1.  Create a new table "product_units". 
@@ -234,6 +234,37 @@ When you have all of these components, you can run the update statement. */
 
 SELECT * from vendor_inventory
 
+SELECT * from product_units
+
 ALTER TABLE product_units
 ADD current_quantity INT;
 
+WITH all_inventory AS (
+    SELECT 
+        product_id,
+        quantity,
+        market_date
+    FROM vendor_inventory
+),
+ranked_inventory AS (
+    SELECT 
+        product_id,
+        quantity,
+        ROW_NUMBER() OVER ( PARTITION BY product_id ORDER BY market_date DESC) as rank_position
+    FROM all_inventory
+),
+latest_inventory AS (
+    SELECT 
+        product_id,
+        COALESCE(quantity, 0) as latest_quantity
+    FROM ranked_inventory
+    WHERE rank_position = 1
+)
+UPDATE product_units
+SET current_quantity = COALESCE((
+    SELECT latest_quantity 
+    FROM latest_inventory 
+    WHERE latest_inventory.product_id = product_units.product_id
+), 0);
+
+SELECT * from product_units
