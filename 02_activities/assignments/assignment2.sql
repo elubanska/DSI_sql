@@ -213,6 +213,8 @@ Finally, make sure you have a WHERE statement to update the right row,
 	you'll need to use product_units.product_id to refer to the correct row within the product_units table. 
 When you have all of these components, you can run the update statement. */
 
+SELECT * from vendor_inventory
 
-
+ALTER TABLE product_units
+ADD current_quantity INT;
 
