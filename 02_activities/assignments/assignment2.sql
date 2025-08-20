@@ -44,21 +44,21 @@ HINT: One of these approaches uses ROW_NUMBER() and one uses DENSE_RANK(). */
 
 SELECT * from customer_purchases
 
-WITH visits AS (
+
 SELECT market_date, customer_id,    
 dense_rank() OVER (PARTITION BY customer_id ORDER BY market_date) AS visit_number FROM customer_purchases ORDER BY 1,2
-)
-SELECT DISTINCT market_date, customer_id, visit_number FROM visits
-WHERE visit_number = 1
 
---ROW_NUMBER() OVER (PARTITION BY customer_id, market_date ORDER BY market_date) AS visit_number FROM customer_purchases ORDER BY 1,2
+
 
 /* 2. Reverse the numbering of the query from a part so each customer’s most recent visit is labeled 1, 
 then write another query that uses this one as a subquery (or temp table) and filters the results to 
 only the customer’s most recent visit. */
 
-SELECT market_date, customer_id, dense_rank() OVER (PARTITION BY customer_id ORDER BY market_date DESC) AS date_rank FROM customer_purchases
-ORDER BY 3
+WITH visits AS (
+SELECT market_date, customer_id, dense_rank() OVER (PARTITION BY customer_id ORDER BY market_date DESC) AS visit_number FROM customer_purchases
+)
+SELECT DISTINCT market_date, customer_id, visit_number FROM visits
+WHERE visit_number = 1
 
 /* 3. Using a COUNT() window function, include a value along with each row of the 
 customer_purchases table that indicates how many different times that customer has purchased that product_id. */
