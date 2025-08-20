@@ -145,9 +145,28 @@ Think a bit about the row counts: how many distinct vendors, product names are t
 How many customers are there (y). 
 Before your final group by you should have the product of those two queries (x*y).  */
 
+--SELECT DISTINCT v.vendor_name, p.product_name, vi.original_price FROM vendor_inventory vi
+--	JOIN vendor As v ON vi.vendor_id = v.vendor_id
+--	JOIN product As p ON vi.product_id = p.product_id
+
+--SELECT COUNT(*) as total_customers FROM customer
+	
+WITH vendor_products AS (
+    SELECT DISTINCT v.vendor_name, p.product_name, vi.original_price FROM vendor_inventory As vi
+		JOIN vendor As v ON vi.vendor_id = v.vendor_id
+		JOIN product As p ON vi.product_id = p.product_id
+),
+customer_count AS (
+    SELECT COUNT(*) as total_customers FROM customer
+)
+SELECT vp.vendor_name,vp.product_name, vp.original_price, cc.total_customers, 5 * vp.original_price * cc.total_customers as total_revenue_per_product
+FROM vendor_products as vp
+CROSS JOIN customer_count As cc
+ORDER BY vp.vendor_name, vp.product_name
 
 
--- INSERT
+
+	-- INSERT
 /*1.  Create a new table "product_units". 
 This table will contain only products where the `product_qty_type = 'unit'`. 
 It should use all of the columns from the product table, as well as a new column for the `CURRENT_TIMESTAMP`.  
