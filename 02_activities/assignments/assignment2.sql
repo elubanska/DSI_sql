@@ -84,6 +84,8 @@ Remove any trailing or leading whitespaces. Don't just use a case statement for 
 
 Hint: you might need to use INSTR(product_name,'-') to find the hyphens. INSTR will help split the column. */
 
+SELECT * FROM product
+
 SELECT product_name,
 	CASE 
         WHEN INSTR(product_name, '-') > 0 
